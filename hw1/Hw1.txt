@@ -1,0 +1,31 @@
+1.Создать именованный пайп
+Вывести через него в файл вывод команды ss -plnt
+
+mkfifo test-pipe
+ss -plnt > test-pipe &
+cat test-pipe > ans.txt && cat ans.txt
+
+2.При помощи именованного пайпа заархивировать всё, что в него отправляем:
+
+mkfifo zip-pipe
+gzip -c < zip-pipe > my-zip &
+cat ans.txt > zip-pipe && cat my-zip
+
+3. Показать дату в юникстайме
+
+На вход команды date через пайп подать свой формат выводимой даты
+echo +%s > ans.txt | date $(cat ans.txt)
+
+mkfifo pipe
+echo +%s > pipe & date $(cat pipe)
+
+4. При помощи HEREDOC "сгенерировать" баш-скрипт для третьего пункта
+
+cat <<END > script-v1.sh
+> mkfifo pipe
+> echo +%s > pipe & date \$(cat pipe)
+> END
+
+cat <<END > script-v2.sh
+> echo +%s > ans.txt | date \$(cat ans.txt)
+> END
